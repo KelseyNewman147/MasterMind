@@ -31,6 +31,7 @@ public class MasterMindController {
             masterMind.guesses[2] = a;
             masterMind.guesses[3] = a;
             masterMind.checks = new int[4];
+            //no guess from FE, so it will initially be blank
             masterMind.checks[0] = 0;
             masterMind.checks[1] = 0;
             masterMind.checks[2] = 0;
@@ -46,9 +47,10 @@ public class MasterMindController {
     //store that guess in our table
     //check against our correct answer through our checkGuess method
     //store the checks array that is generated through that method in the checks column of our table
+    //return the checks array to FE
 
-    @RequestMapping(path = "/answer", method = RequestMethod.GET)
-    //return to FE the checks array that was generated in post method
+
+//    @RequestMapping(path = "/answer", method = RequestMethod.GET)
 
 
     public static int randomNumber() {
@@ -65,10 +67,12 @@ public class MasterMindController {
             for (int j = 0; j < correctAnswer.length; j++) {
                 if (guess[i] == correctAnswer[j]) {
                     checks[i] = red;
-                    //TODO find a way to take j out of the array that is being compared so that repeated numbers in guess aren't checked against same number in correctAnswer
+                    //take j out of the array that is being compared so that repeated numbers in guess aren't checked against same number in correctAnswer
+                    Arrays.asList(correctAnswer).remove(correctAnswer[j]);
                     break;
                 } else if (Arrays.asList(correctAnswer).contains(guess[i])) {
                     checks[i] = white;
+                    Arrays.asList(correctAnswer).remove(correctAnswer[j]==guess[i]);
                     break;
                 } else {
                     checks[i] = noMatch;
