@@ -6,8 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by kelseynewman on 1/20/17.
@@ -59,7 +58,10 @@ public class MasterMindController {
     //return the checks array to FE
 
     @CrossOrigin
-    @RequestMapping(path = "/answer", method = RequestMethod.GET)
+    @RequestMapping(path = "/", method = RequestMethod.GET)
+    public List<MasterMind> homePage() {
+        return (List)games.findAll();
+    }
 
 
     public static int randomNumber() {
