@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -43,10 +44,11 @@ public class MasterMindController {
     @CrossOrigin
     @RequestMapping(path = "/", method = RequestMethod.POST)
     public MasterMindViewModel postGuess(@RequestBody int[] guess) {
+        int [] answer = games.findByRound(1).getGuesses();
         MasterMind masterMind = new MasterMind();
         while (masterMind.getRound() <= 12) {
             masterMind.setGuesses(guess);
-            masterMind.setChecks(checkGuess(guess));
+            masterMind.setChecks(checkGuess(guess, answer));
             games.save(masterMind);
         }
         //when round > 12 -> end game and return correct correct answer ?
@@ -81,42 +83,27 @@ public class MasterMindController {
     //doesn't work if a repeated number has already generated a white peg, but matches in position later in the array
     //is there a way to check each for  matched position in first if stmt before moving on to the rest?
     //if so, would that trigger the noMatch (because matches are now zero) as we iterate through the rest of the array and subsequently set checks back to 0?
-    public int[] checkGuess(int[] guess) {
-        int red = 0;
-        int white = 0;
-        int noMatch = 0;
-        int[] checks = new int[2];
-        int[] correctAnswer = games.findByRound(1).guesses;
-        for (int i = 0; i < guess.length; i++) {
-            for (int j = 0; j < correctAnswer.length; j++) {
-                if (guess[i] == correctAnswer[i]) {
-                    red++;
-                    correctAnswer[i] = 0;
-                    //changes element that was matched to 0 so that repeated numbers in guess aren't checked against same number in correctAnswer
-                    break;
-                } else if (guess[i] == correctAnswer[0]) {
-                    white++;
-                    correctAnswer[0] = 0;
-                    break;
-                } else if (guess[i] == correctAnswer[1]) {
-                    white++;
-                    correctAnswer[1] = 0;
-                    break;
-                } else if (guess[i] == correctAnswer[2]) {
-                    white++;
-                    correctAnswer[2] = 0;
-                    break;
-                } else if (guess[i] == correctAnswer[3]) {
-                    white++;
-                    correctAnswer[3] = 0;
-                    break;
+    public int[] checkGuess(int[] guess, int[] answer) {
+        answer = Arrays.copyOf(answer, answer.length);
 
-                }
+        int [] results = new int[answer.length];
+
+        for (int i = 0; i < results.length; i ++) {
+            if (answer[i] == guess[i]){
+                results[i] = 2;
+                answer[i] = 0;
+                continue;
+            }
+
+            int answerIndex = Arrays.binarySearch(answer, guess[i]);
+
+            if( answerIndex > -1) {
+                results[i] = 1;
+                answer[answerIndex] = 0;
             }
         }
-        return checks;
-    }
 
-    public void checkAgainstAnswer(int [] checks, int [] answers){}
+    return results;
+    }
 
 }
