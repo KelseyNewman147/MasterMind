@@ -25,17 +25,9 @@ public class MasterMindController {
     public void init() {
         if (games.count() == 0) {
             MasterMind masterMind = new MasterMind();
-            masterMind.guesses = new int[4];
-            masterMind.guesses[0] = randomNumber();
-            masterMind.guesses[1] = randomNumber();
-            masterMind.guesses[2] = randomNumber();
-            masterMind.guesses[3] = randomNumber();
-            masterMind.checks = new int[4];
+            masterMind.setGuesses(new int[] {randomNumber(), randomNumber(), randomNumber(), randomNumber()});
+            masterMind.setChecks( new int[] {0,0,0,0});
             //no guess from FE, so it will initially be blank
-            masterMind.checks[0] = 0;
-            masterMind.checks[1] = 0;
-            masterMind.checks[2] = 0;
-            masterMind.checks[3] = 0;
             games.save(masterMind);
         }
     }
@@ -46,9 +38,9 @@ public class MasterMindController {
     public MasterMindViewModel postGuess(@RequestBody int[] guess) {
         int [] answer = games.findByRound(1).getGuesses();
         MasterMind masterMind = new MasterMind();
-        while (masterMind.getRound() <= 12) {
+        if(masterMind.getRound()<=12) {
             masterMind.setGuesses(guess);
-            masterMind.setChecks(checkGuess(guess, answer));
+            masterMind.setChecks(checkGuess(answer, guess));
             games.save(masterMind);
         }
         //when round > 12 -> end game and return correct correct answer ?
@@ -83,7 +75,7 @@ public class MasterMindController {
     //doesn't work if a repeated number has already generated a white peg, but matches in position later in the array
     //is there a way to check each for  matched position in first if stmt before moving on to the rest?
     //if so, would that trigger the noMatch (because matches are now zero) as we iterate through the rest of the array and subsequently set checks back to 0?
-    public int[] checkGuess(int[] guess, int[] answer) {
+    public int[] checkGuess(int[] answer, int[] guess) {
         answer = Arrays.copyOf(answer, answer.length);
 
         int [] results = new int[answer.length];
