@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Created by kelseynewman on 1/20/17.
@@ -24,12 +25,11 @@ public class MasterMindController {
     public void init() {
         if (games.count() == 0) {
             MasterMind masterMind = new MasterMind();
-            int a = randomNumber();
             masterMind.guesses = new int[4];
-            masterMind.guesses[0] = a;
-            masterMind.guesses[1] = a;
-            masterMind.guesses[2] = a;
-            masterMind.guesses[3] = a;
+            masterMind.guesses[0] = randomNumber();
+            masterMind.guesses[1] = randomNumber();
+            masterMind.guesses[2] = randomNumber();
+            masterMind.guesses[3] = randomNumber();
             masterMind.checks = new int[4];
             //no guess from FE, so it will initially be blank
             masterMind.checks[0] = 0;
@@ -43,6 +43,16 @@ public class MasterMindController {
     //if round > 12 end game and return correct answer
 
     @RequestMapping(path = "/guess", method = RequestMethod.POST)
+    public int[] postGuess(@RequestBody int[] guess) {
+        MasterMind masterMind = new MasterMind();
+        while (masterMind.getRound() <= 12) {
+            masterMind.guesses = guess;
+            masterMind.checks = checkGuess(guess);
+            games.save(masterMind);
+        }
+        //when rounds > 12 -> end game and return correct correct answer ?
+        return masterMind.checks;
+    }
     //we take in their guess and compare it to randomly generated guess in spot one of our guess table
     //store that guess in our table
     //check against our correct answer through our checkGuess method
@@ -50,30 +60,43 @@ public class MasterMindController {
     //return the checks array to FE
 
 
-//    @RequestMapping(path = "/answer", method = RequestMethod.GET)
+    @RequestMapping(path = "/answer", method = RequestMethod.GET)
 
 
     public static int randomNumber() {
-        return (int)((Math.random()* 8) + 1);
+        return (int) ((Math.random() * 8) + 1);
     }
 
-    public int [] checkGuess(int [] guess) {
+    public int[] checkGuess(int[] guess) {
         int red = 2;
         int white = 1;
         int noMatch = 0;
-        int [] checks = new int [4];
-        int [] correctAnswer = games.findById(1).guesses;
-        for (int i = 0; i < guess.length; i ++) {
+        int[] checks = new int[4];
+        int[] correctAnswer = games.findByRound(1).guesses;
+        for (int i = 0; i < guess.length; i++) {
             for (int j = 0; j < correctAnswer.length; j++) {
-                if (guess[i] == correctAnswer[j]) {
+                if (guess[i] == correctAnswer[i]) {
                     checks[i] = red;
                     //take j out of the array that is being compared so that repeated numbers in guess aren't checked against same number in correctAnswer
-                    Arrays.asList(correctAnswer).remove(correctAnswer[j]);
+                    //Arrays.asList(correctAnswer).remove(correctAnswer[i]);
+                    //Collections.replaceAll(Arrays.asList(correctAnswer), correctAnswer[i], 0);
                     break;
-                } else if (Arrays.asList(correctAnswer).contains(guess[i])) {
+                } else if (guess[i] == correctAnswer[0]) {
                     checks[i] = white;
-                    Arrays.asList(correctAnswer).remove(correctAnswer[j]==guess[i]);
                     break;
+                } else if (guess[i] == correctAnswer[1]) {
+                    checks[i] = white;
+                    break;
+                } else if (guess[i] == correctAnswer[2]) {
+                    checks[i] = white;
+                    break;
+                } else if (guess[i] == correctAnswer[3]) {
+                    checks[i] = white;
+                    break;
+//                } else if (Arrays.asList(correctAnswer).contains(guess[i])) {
+//                    checks[i] = white;
+//                    Arrays.asList(correctAnswer).remove(correctAnswer[j] == guess[i]);
+//                    break;
                 } else {
                     checks[i] = noMatch;
                     break;

@@ -14,4 +14,10 @@ public class MasterMindApplicationTests {
 	}
 
 
+	@Test
+	public void name() throws Exception {
+
+	}
+
+
 }

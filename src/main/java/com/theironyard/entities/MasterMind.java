@@ -24,8 +24,7 @@ public class MasterMind {
     public MasterMind() {
     }
 
-    public MasterMind(int round, int[] guesses, int[] checks) {
-        this.round = round;
+    public MasterMind(int[] guesses, int[] checks) {
         this.guesses = guesses;
         this.checks = checks;
     }
