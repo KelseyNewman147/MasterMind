@@ -1,5 +1,6 @@
 package com.theironyard.controllers;
 
+import com.theironyard.viewmodels.MasterMindViewModel;
 import com.theironyard.entities.MasterMind;
 import com.theironyard.services.MasterMindRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +60,16 @@ public class MasterMindController {
 
     @CrossOrigin
     @RequestMapping(path = "/", method = RequestMethod.GET)
-    public List<MasterMind> homePage() {
-        return (List)games.findAll();
+    public MasterMindViewModel homePage() {
+        return new MasterMindViewModel((List)games.findAll());
+    }
+
+    @CrossOrigin
+    @RequestMapping(path = "/", method = RequestMethod.POST)
+    public MasterMindViewModel homePage(@RequestBody MasterMind newGame) {
+        games.save(newGame);
+
+        return new MasterMindViewModel((List)games.findAll());
     }
 
 
