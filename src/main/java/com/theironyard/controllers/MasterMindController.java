@@ -3,10 +3,7 @@ package com.theironyard.controllers;
 import com.theironyard.entities.MasterMind;
 import com.theironyard.services.MasterMindRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
@@ -20,6 +17,8 @@ import java.util.Collections;
 public class MasterMindController {
     @Autowired
     MasterMindRepository games;
+
+
 
     @PostConstruct
     public void init() {
@@ -41,7 +40,7 @@ public class MasterMindController {
     }
     //while round <= 12, check guess against correct answer
     //if round > 12 end game and return correct answer
-
+   @CrossOrigin
     @RequestMapping(path = "/guess", method = RequestMethod.POST)
     public int[] postGuess(@RequestBody int[] guess) {
         MasterMind masterMind = new MasterMind();
@@ -59,7 +58,7 @@ public class MasterMindController {
     //store the checks array that is generated through that method in the checks column of our table
     //return the checks array to FE
 
-
+    @CrossOrigin
     @RequestMapping(path = "/answer", method = RequestMethod.GET)
 
 
