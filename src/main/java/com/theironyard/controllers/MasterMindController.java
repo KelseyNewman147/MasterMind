@@ -50,7 +50,7 @@ public class MasterMindController {
             masterMind.checks = checkGuess(guess);
             games.save(masterMind);
         }
-        //when rounds > 12 -> end game and return correct correct answer ?
+        //when round > 12 -> end game and return correct correct answer ?
         return masterMind.checks;
     }
     //we take in their guess and compare it to randomly generated guess in spot one of our guess table
@@ -67,6 +67,9 @@ public class MasterMindController {
         return (int) ((Math.random() * 8) + 1);
     }
 
+    //doesn't work if a repeated number has already generated a white peg, but matches in position later in the array
+    //is there a way to check each for  matched position in first if stmt before moving on to the rest?
+    //if so, would that trigger the noMatch (because matches are now zero) as we iterate through the rest of the array and subsequently set checks back to 0?
     public int[] checkGuess(int[] guess) {
         int red = 2;
         int white = 1;
@@ -77,21 +80,24 @@ public class MasterMindController {
             for (int j = 0; j < correctAnswer.length; j++) {
                 if (guess[i] == correctAnswer[i]) {
                     checks[i] = red;
-                    //take j out of the array that is being compared so that repeated numbers in guess aren't checked against same number in correctAnswer
-                    //Arrays.asList(correctAnswer).remove(correctAnswer[i]);
-                    //Collections.replaceAll(Arrays.asList(correctAnswer), correctAnswer[i], 0);
+                    correctAnswer[i] = 0;
+                    //changes element that was matched to 0 so that repeated numbers in guess aren't checked against same number in correctAnswer
                     break;
                 } else if (guess[i] == correctAnswer[0]) {
                     checks[i] = white;
+                    correctAnswer[0] = 0;
                     break;
                 } else if (guess[i] == correctAnswer[1]) {
                     checks[i] = white;
+                    correctAnswer[1] = 0;
                     break;
                 } else if (guess[i] == correctAnswer[2]) {
                     checks[i] = white;
+                    correctAnswer[2] = 0;
                     break;
                 } else if (guess[i] == correctAnswer[3]) {
                     checks[i] = white;
+                    correctAnswer[3] = 0;
                     break;
 //                } else if (Arrays.asList(correctAnswer).contains(guess[i])) {
 //                    checks[i] = white;
