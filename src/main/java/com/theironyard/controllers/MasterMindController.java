@@ -40,9 +40,9 @@ public class MasterMindController {
     }
     //while round <= 12, check guess against correct answer
     //if round > 12 end game and return correct answer
-   @CrossOrigin
+    @CrossOrigin
     @RequestMapping(path = "/guess", method = RequestMethod.POST)
-    public int[] postGuess(@RequestBody int[] guess) {
+    public MasterMind postGuess(@RequestBody int[] guess) {
         MasterMind masterMind = new MasterMind();
         while (masterMind.getRound() <= 12) {
             masterMind.guesses = guess;
@@ -50,7 +50,7 @@ public class MasterMindController {
             games.save(masterMind);
         }
         //when round > 12 -> end game and return correct correct answer ?
-        return masterMind.checks;
+        return new MasterMind();
     }
     //we take in their guess and compare it to randomly generated guess in spot one of our guess table
     //store that guess in our table
