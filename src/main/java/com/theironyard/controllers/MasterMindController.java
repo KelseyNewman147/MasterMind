@@ -29,6 +29,12 @@ public class MasterMindController {
             games.save(masterMind);
         }
     }
+
+    @CrossOrigin
+    @RequestMapping(path = "/", method = RequestMethod.GET)
+    public MasterMindViewModel homePage() {
+        return new MasterMindViewModel((List)games.findAll());
+    }
     //while round <= 12, check guess against correct answer
     //if round > 12 end game and return correct answer
     @CrossOrigin
@@ -60,13 +66,6 @@ public class MasterMindController {
         init();
 
         return "redirect:/";
-    }
-
-
-    @CrossOrigin
-    @RequestMapping(path = "/", method = RequestMethod.GET)
-    public MasterMindViewModel homePage() {
-        return new MasterMindViewModel((List)games.findAll());
     }
 
 
