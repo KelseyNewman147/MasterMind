@@ -19,8 +19,6 @@ public class MasterMindController {
     @Autowired
     MasterMindRepository games;
 
-
-
     @PostConstruct
     public void init() {
         if (games.count() == 0) {
@@ -36,12 +34,16 @@ public class MasterMindController {
     @CrossOrigin
     @RequestMapping(path = "/", method = RequestMethod.POST)
     public MasterMindViewModel postGuess(@RequestBody int[] guess) {
-        int [] answer = games.findByRound(1).getGuesses();
+        int [] answer = games.findByRound(11).getGuesses();
         MasterMind masterMind = new MasterMind();
         if(masterMind.getRound()<=12) {
             masterMind.setGuesses(guess);
             masterMind.setChecks(checkGuess(answer, guess));
-            games.save(masterMind);
+            if (!masterMind.getChecks().equals(new int[]{2, 2, 2, 2})) {
+                games.save(masterMind);
+            } else {
+                requestGame();
+            }
         }
         //when round > 12 -> end game and return correct correct answer ?
         return new MasterMindViewModel((List)games.findAll());
@@ -51,6 +53,15 @@ public class MasterMindController {
     //check against our correct answer through our checkGuess method
     //store the checks array that is generated through that method in the checks column of our table
     //return the checks array to FE
+    @CrossOrigin
+    @RequestMapping(path = "/new-game", method = RequestMethod.POST)
+    public String requestGame(){
+        games.deleteAll();
+        init();
+
+        return "redirect:/";
+    }
+
 
     @CrossOrigin
     @RequestMapping(path = "/", method = RequestMethod.GET)
@@ -58,44 +69,46 @@ public class MasterMindController {
         return new MasterMindViewModel((List)games.findAll());
     }
 
-//    @CrossOrigin
-//    @RequestMapping(path = "/", method = RequestMethod.POST)
-//    public MasterMindViewModel homePage(@RequestBody MasterMind newGame) {
-//
-//        games.save(newGame);
-//
-//        return new MasterMindViewModel((List)games.findAll());
-//    }
-
 
     public static int randomNumber() {
         return (int) ((Math.random() * 8) + 1);
     }
 
-    //doesn't work if a repeated number has already generated a white peg, but matches in position later in the array
-    //is there a way to check each for  matched position in first if stmt before moving on to the rest?
-    //if so, would that trigger the noMatch (because matches are now zero) as we iterate through the rest of the array and subsequently set checks back to 0?
-    public int[] checkGuess(int[] answer, int[] guess) {
+    public static int[] checkGuess(int[] answer, int[] guess) {
         answer = Arrays.copyOf(answer, answer.length);
+        guess = Arrays.copyOf(guess, guess.length);
 
         int [] results = new int[answer.length];
 
+
         for (int i = 0; i < results.length; i ++) {
-            if (answer[i] == guess[i]){
+            if (answer[i] == guess[i]) {
                 results[i] = 2;
                 answer[i] = 0;
-                continue;
+                guess[i] = 0;
             }
+        }
 
-            int answerIndex = Arrays.binarySearch(answer, guess[i]);
+        for (int i = 0; i < results.length; i ++) {
+            int answerIndex = findIndexOfValue(answer, guess[i]);
 
-            if( answerIndex > -1) {
+            if (answerIndex > -1 && answer[answerIndex] > 0) {
                 results[i] = 1;
                 answer[answerIndex] = 0;
             }
         }
 
     return results;
+    }
+
+    public static int findIndexOfValue(int [] array, int value) {
+        for (int i = 0;i < array.length;i++) {
+            if (array[i] == value) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 
 }
