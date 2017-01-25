@@ -40,7 +40,7 @@ public class MasterMindController {
     @CrossOrigin
     @RequestMapping(path = "/", method = RequestMethod.POST)
     public MasterMindViewModel postGuess(@RequestBody int[] guess) {
-        int [] answer = games.findByRound(3).getGuesses();
+        int [] answer = games.findByRound(1).getGuesses();
         MasterMind masterMind = new MasterMind();
             masterMind.setGuesses(guess);
             masterMind.setChecks(checkGuess(answer, guess));
