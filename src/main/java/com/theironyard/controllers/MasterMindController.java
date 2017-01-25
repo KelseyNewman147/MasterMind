@@ -44,6 +44,7 @@ public class MasterMindController {
         MasterMind masterMind = new MasterMind();
             masterMind.setGuesses(guess);
             masterMind.setChecks(checkGuess(answer, guess));
+            games.save(masterMind);
         return new MasterMindViewModel((List)games.findAll());
     }
     //we take in their guess and compare it to randomly generated guess in spot one of our guess table
