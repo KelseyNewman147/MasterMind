@@ -42,15 +42,15 @@ public class MasterMindController {
     public MasterMindViewModel postGuess(@RequestBody int[] guess) {
         int [] answer = games.findByRound(11).getGuesses();
         MasterMind masterMind = new MasterMind();
-        if(masterMind.getRound()<=12) {
+        //if(masterMind.getRound()<=12) {
             masterMind.setGuesses(guess);
             masterMind.setChecks(checkGuess(answer, guess));
-            if (!masterMind.getChecks().equals(new int[]{2, 2, 2, 2})) {
+        //if (!masterMind.getChecks().equals(new int[]{2, 2, 2, 2})) {
                 games.save(masterMind);
-            } else {
+    //} else {
                 requestGame();
-            }
-        }
+           // }
+        //}
         //when round > 12 -> end game and return correct correct answer ?
         return new MasterMindViewModel((List)games.findAll());
     }
