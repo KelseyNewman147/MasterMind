@@ -40,18 +40,10 @@ public class MasterMindController {
     @CrossOrigin
     @RequestMapping(path = "/", method = RequestMethod.POST)
     public MasterMindViewModel postGuess(@RequestBody int[] guess) {
-        int [] answer = games.findByRound(11).getGuesses();
+        int [] answer = games.findByRound(3).getGuesses();
         MasterMind masterMind = new MasterMind();
-        //if(masterMind.getRound()<=12) {
             masterMind.setGuesses(guess);
             masterMind.setChecks(checkGuess(answer, guess));
-        //if (!masterMind.getChecks().equals(new int[]{2, 2, 2, 2})) {
-                games.save(masterMind);
-    //} else {
-                requestGame();
-           // }
-        //}
-        //when round > 12 -> end game and return correct correct answer ?
         return new MasterMindViewModel((List)games.findAll());
     }
     //we take in their guess and compare it to randomly generated guess in spot one of our guess table
