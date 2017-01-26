@@ -55,11 +55,15 @@ public class MasterMindController {
             masterMind.setGuesses(guess); // sets their guess
             masterMind.setChecks(checkGuess(answer, guess)); //this compares answer with guess and returns checks array
             masterMind.setRound(count++);
-            games.save(masterMind);
-        } else if (masterMind.getRound() > 12 || masterMind.getGuesses() == answer){
+        } else if (masterMind.getGuesses() == answer) {
             games.deleteAll();
             flag = true;
+        } else {
+            games.deleteAll();
+            flag=true;
         }
+        games.save(masterMind);
+
         return new MasterMindViewModel((List)games.findAll());
     }
     //we take in their guess and compare it to randomly generated guess in spot one of our guess table
