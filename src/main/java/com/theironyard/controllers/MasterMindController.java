@@ -50,7 +50,7 @@ public class MasterMindController {
         if(masterMind.round <= 12) { // round is less or equal to 12 DO DIS
             masterMind.setGuesses(guess); // sets their guess
             masterMind.setChecks(checkGuess(answer, guess)); //this compares answer with guess and returns checks array
-            masterMind.round++;
+            masterMind.setRound(masterMind.round++);
             games.save(masterMind);
         } else if (masterMind.getRound() > 12 || masterMind.getGuesses() == answer){
             games.deleteAll();
