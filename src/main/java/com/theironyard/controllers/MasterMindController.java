@@ -47,7 +47,7 @@ public class MasterMindController {
     @RequestMapping(path = "/", method = RequestMethod.POST)
     public MasterMindViewModel postGuess(@RequestBody int[] guess) {
         MasterMind masterMind = new MasterMind();
-        if(masterMind.getRound() <= 12) { // round is less or equal to 12 DO DIS
+        if(masterMind.round <= 12) { // round is less or equal to 12 DO DIS
             masterMind.setGuesses(guess); // sets their guess
             masterMind.setChecks(checkGuess(answer, guess)); //this compares answer with guess and returns checks array
             masterMind.round++;
