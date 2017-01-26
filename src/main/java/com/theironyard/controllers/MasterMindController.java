@@ -36,11 +36,11 @@ public class MasterMindController {
         }
     }
 
-    @CrossOrigin
-    @RequestMapping(path = "/", method = RequestMethod.GET)
-    public MasterMindViewModel homePage() {
-        return new MasterMindViewModel((List)games.findAll());
-    }
+//    @CrossOrigin
+//    @RequestMapping(path = "/", method = RequestMethod.GET)
+//    public MasterMindViewModel homePage() {
+//        return new MasterMindViewModel((List)games.findAll());
+//    }
     //while round <= 12, check guess against correct answer
     //if round > 12 end game and return correct answer
     @CrossOrigin
@@ -50,8 +50,8 @@ public class MasterMindController {
         if(masterMind.getRound() <= 12) { // round is less or equal to 12 DO DIS
             masterMind.setGuesses(guess); // sets their guess
             masterMind.setChecks(checkGuess(answer, guess)); //this compares answer with guess and returns checks array
-            games.save(masterMind);
             masterMind.round++;
+            games.save(masterMind);
         } else if (masterMind.getRound() > 12 || masterMind.getGuesses() == answer){
             games.deleteAll();
             flag = true;
