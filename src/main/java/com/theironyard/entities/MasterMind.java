@@ -11,6 +11,10 @@ import java.lang.reflect.Array;
 public class MasterMind {
     @Id
     @GeneratedValue
+    int id;
+
+    @Column(nullable = false)
+    public
     int round;
 
     @Column (nullable = false)
@@ -24,7 +28,8 @@ public class MasterMind {
     public MasterMind() {
     }
 
-    public MasterMind(int[] guesses, int[] checks) {
+    public MasterMind(int round, int[] guesses, int[] checks) {
+        this.round = round;
         this.guesses = guesses;
         this.checks = checks;
     }

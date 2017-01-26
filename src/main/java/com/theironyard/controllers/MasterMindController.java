@@ -16,17 +16,23 @@ import java.util.List;
 
 @RestController
 public class MasterMindController {
+    int [] answer = new int[4]; // set answer each game
+    boolean flag = true; // to create new game
+
     @Autowired
     MasterMindRepository games;
 
     @PostConstruct
     public void init() {
-        if (games.count() == 0) {
+        if (flag) {
             MasterMind masterMind = new MasterMind();
+            masterMind.setRound(0);
             masterMind.setGuesses(new int[] {randomNumber(), randomNumber(), randomNumber(), randomNumber()});
             masterMind.setChecks( new int[] {0,0,0,0});
+            answer = masterMind.getGuesses();
             //no guess from FE, so it will initially be blank
             games.save(masterMind);
+            flag = false;
         }
     }
 
@@ -40,11 +46,16 @@ public class MasterMindController {
     @CrossOrigin
     @RequestMapping(path = "/", method = RequestMethod.POST)
     public MasterMindViewModel postGuess(@RequestBody int[] guess) {
-        int [] answer = games.findByRound(1).getGuesses();
         MasterMind masterMind = new MasterMind();
-            masterMind.setGuesses(guess);
-            masterMind.setChecks(checkGuess(answer, guess));
+        if(masterMind.getRound() <= 12) { // round is less or equal to 12 DO DIS
+            masterMind.setGuesses(guess); // sets their guess
+            masterMind.setChecks(checkGuess(answer, guess)); //this compares answer with guess and returns checks array
             games.save(masterMind);
+            masterMind.round++;
+        } else if (masterMind.getRound() > 12 || masterMind.getGuesses() == answer){
+            games.deleteAll();
+            flag = true;
+        }
         return new MasterMindViewModel((List)games.findAll());
     }
     //we take in their guess and compare it to randomly generated guess in spot one of our guess table
@@ -52,14 +63,6 @@ public class MasterMindController {
     //check against our correct answer through our checkGuess method
     //store the checks array that is generated through that method in the checks column of our table
     //return the checks array to FE
-    @CrossOrigin
-    @RequestMapping(path = "/new-game", method = RequestMethod.POST)
-    public String requestGame(){
-        games.deleteAll();
-        init();
-
-        return "redirect:/";
-    }
 
 
     public static int randomNumber() {
