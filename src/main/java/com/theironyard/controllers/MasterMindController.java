@@ -18,9 +18,6 @@ import java.util.List;
 public class MasterMindController {
     int [] answer = new int[4]; // set answer each game
     boolean flag = true; // to create new game
-    int count;
-
-
 
     @Autowired
     MasterMindRepository games;
@@ -28,50 +25,44 @@ public class MasterMindController {
     @PostConstruct
     public void init() {
         if (flag) {
-            MasterMind masterMind = new MasterMind();
-            masterMind.setRound(0);
-            masterMind.setGuesses(new int[] {randomNumber(), randomNumber(), randomNumber(), randomNumber()});
-            masterMind.setChecks( new int[] {0,0,0,0});
-            answer = masterMind.getGuesses();
-            //no guess from FE, so it will initially be blank
-            games.save(masterMind);
-            count = 1;
+            games.deleteAll();
+            answer = new int[] {randomNumber(), randomNumber(), randomNumber(), randomNumber()};
             flag = false;
         }
     }
 
-    @CrossOrigin
-    @RequestMapping(path = "/", method = RequestMethod.GET)
-    public MasterMindViewModel homePage() {
-        return new MasterMindViewModel((List)games.findAll());
-    }
     //while round <= 12, check guess against correct answer
     //if round > 12 end game and return correct answer
+
     @CrossOrigin
     @RequestMapping(path = "/", method = RequestMethod.POST)
     public MasterMindViewModel postGuess(@RequestBody int[] guess) {
+        init();
         MasterMind masterMind = new MasterMind();
-        if(masterMind.round <= 12) { // round is less or equal to 12 DO DIS
-            masterMind.setGuesses(guess); // sets their guess
-            masterMind.setChecks(checkGuess(answer, guess)); //this compares answer with guess and returns checks array
-            masterMind.setRound(count++);
-        } else if (masterMind.getGuesses() == answer) {
-            games.deleteAll();
-            flag = true;
-        } else {
-            games.deleteAll();
-            flag=true;
-        }
-        games.save(masterMind);
+        MasterMindViewModel model = new MasterMindViewModel();
+        masterMind.setRound(model.getId());
+        masterMind.setGuesses(guess); // sets their guess
+        masterMind.setChecks(checkGuess(answer, guess)); //this compares answer with guess and returns checks array
 
-        return new MasterMindViewModel((List)games.findAll());
+            if (Arrays.equals(masterMind.getGuesses(), answer) || (model.getId() == 12)) { // round is less or equal to 12 DO DIS) {
+                games.save(masterMind);
+                MasterMind answerMind = new MasterMind();
+                answerMind.setGuesses(answer);
+                answerMind.setChecks(checkGuess(answer, guess));
+                games.save(answerMind);
+                MasterMindViewModel.setStaticId(0);
+                flag = true;
+            }else {
+                games.save(masterMind);
+            }
+        model.setGames((List)games.findAll());
+        return model;
     }
     //we take in their guess and compare it to randomly generated guess in spot one of our guess table
     //store that guess in our table
     //check against our correct answer through our checkGuess method
     //store the checks array that is generated through that method in the checks column of our table
     //return the checks array to FE
-
 
     public static int randomNumber() {
         return (int) ((Math.random() * 8) + 1);

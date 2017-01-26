@@ -11,7 +11,7 @@ public class MasterMindViewModel {
     private static int STATIC_ID = 0;
 
     private List<MasterMind> games;
-    private int id;
+    private int id = 0;
 
     public MasterMindViewModel() {
         id = STATIC_ID++;
