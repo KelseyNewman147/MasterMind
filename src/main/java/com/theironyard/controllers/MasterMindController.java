@@ -18,7 +18,7 @@ import java.util.List;
 public class MasterMindController {
     int [] answer = new int[4]; // set answer each game
     boolean flag = true; // to create new game
-    int count = 1;
+    int count;
 
 
 
@@ -35,6 +35,7 @@ public class MasterMindController {
             answer = masterMind.getGuesses();
             //no guess from FE, so it will initially be blank
             games.save(masterMind);
+            count = 1;
             flag = false;
         }
     }
