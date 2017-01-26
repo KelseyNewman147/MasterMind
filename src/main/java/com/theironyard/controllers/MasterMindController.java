@@ -18,6 +18,9 @@ import java.util.List;
 public class MasterMindController {
     int [] answer = new int[4]; // set answer each game
     boolean flag = true; // to create new game
+    int count = 1;
+
+
 
     @Autowired
     MasterMindRepository games;
@@ -50,7 +53,7 @@ public class MasterMindController {
         if(masterMind.round <= 12) { // round is less or equal to 12 DO DIS
             masterMind.setGuesses(guess); // sets their guess
             masterMind.setChecks(checkGuess(answer, guess)); //this compares answer with guess and returns checks array
-            masterMind.setRound(masterMind.round++);
+            masterMind.setRound(count++);
             games.save(masterMind);
         } else if (masterMind.getRound() > 12 || masterMind.getGuesses() == answer){
             games.deleteAll();
